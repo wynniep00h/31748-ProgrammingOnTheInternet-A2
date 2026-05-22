@@ -1,10 +1,11 @@
-#environmental variables
+# Environment variables (catches .env in ALL subfolders)
 .env
 .env.local
 .env.development
 .env.production
 .env.*
-
+**/.env
+**/.env.*
 
 # Logs
 logs
