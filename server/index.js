@@ -22,7 +22,7 @@ app.use('/api/admin', adminRoutes);
 
 
 app.get("/api/health", (req, res) => {
-    res.status(200).json({ message: "ok" });
+    res.status(200).json({ status: "ok" });
 });
 
 mongoose
@@ -32,6 +32,6 @@ mongoose
     app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
   })
   .catch((err) => {
-    console.error(" MongoDB NOT connection :<:", err.message);
+    console.error(" MongoDB NOT connected :<:", err.message);
     process.exit(1);
   });

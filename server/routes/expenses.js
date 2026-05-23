@@ -6,14 +6,15 @@ import authMiddleware from "../middleware/auth.js";
 const router = express.Router();
 
 router.use(authMiddleware);
- //helper for log activity
- const logActivity = async (userID, username, action, details = "") => {
-    try {
-        await Activity.create({ user: userID, username, action, details });
-    } catch { }
-    };
 
-// GET all expenses
+// Helper for logging activity
+const logActivity = async (userId, username, action, details = "") => {
+  try {
+    await Activity.create({ user: userId, username, action, details });
+  } catch { }
+};
+
+// GET all expenses — only logged in user's expenses
 router.get("/", async (req, res) => {
   try {
     const { category, startDate, endDate } = req.query;
@@ -40,7 +41,7 @@ router.get("/summary/by-category", async (req, res) => {
       { $match: { owner: req.user._id } },
       {
         $group: {
-          _id: "$category",
+          _id:   "$category",
           total: { $sum: "$amount" },
           count: { $sum: 1 },
         },
@@ -57,6 +58,7 @@ router.get("/summary/by-category", async (req, res) => {
 router.get("/summary/monthly", async (req, res) => {
   try {
     const result = await Expense.aggregate([
+      { $match: { owner: req.user._id } }, 
       {
         $group: {
           _id: {
@@ -79,7 +81,8 @@ router.get("/summary/monthly", async (req, res) => {
 router.post("/", async (req, res) => {
   try {
     const expense = new Expense({
-      ...req.body, owner: req.user._id
+      ...req.body,
+      owner: req.user._id,
     });
     await expense.save();
 
@@ -87,7 +90,7 @@ router.post("/", async (req, res) => {
       req.user._id,
       req.user.username,
       "create_expense",
-      'Created expense: ${expense.title} $${expense.amount}'
+      `Created expense: ${expense.title} $${expense.amount}`
     );
 
     res.status(201).json(expense);
@@ -102,22 +105,22 @@ router.post("/", async (req, res) => {
 // PUT update an existing expense
 router.put("/:id", async (req, res) => {
   try {
-    const expense = await Expense.findByIdAndUpdate(
+    const expense = await Expense.findOneAndUpdate( 
       { _id: req.params.id, owner: req.user._id },
       req.body,
       { new: true, runValidators: true }
     );
 
     if (!expense) {
-      return res.status(404).json({ error: "Expense not found" });
-  }
-  
-  await logActivity(
-    req.user._id,
-    req.user.username,
-    "update_expense",
-    'Updated expense: ${expense.title} $${expense.amount}'
-  );
+      return res.status(404).json({ error: "Expense not found." });
+    }
+
+    await logActivity(
+      req.user._id,
+      req.user.username,
+      "update_expense",
+      `Updated expense: ${expense.title} $${expense.amount}` 
+    );
 
     res.json(expense);
   } catch (err) {
@@ -131,23 +134,22 @@ router.put("/:id", async (req, res) => {
 // DELETE an expense
 router.delete("/:id", async (req, res) => {
   try {
-    const expense = await Expense.findByIdAndDelete({
-      _id: req.params.id,
-      owner: req.user._id,
-    });
+    const expense = await Expense.findOneAndDelete(
+      { _id: req.params.id, owner: req.user._id }
+    );
 
     if (!expense) {
-      return res.status(404).json({ error: "Expense not found" });
-  }
+      return res.status(404).json({ error: "Expense not found." });
+    }
 
-  await logActivity(
-    req.user._id,
-    req.user.username,
-    "delete_expense",
-    'Deleted expense: ${expense.title} $${expense.amount}'
-  );
+    await logActivity(
+      req.user._id,
+      req.user.username,
+      "delete_expense",
+      `Deleted expense: ${expense.title} $${expense.amount}`
+    );
 
-    res.json({ message: "Expense deleted" });
+    res.json({ message: "Expense deleted." });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

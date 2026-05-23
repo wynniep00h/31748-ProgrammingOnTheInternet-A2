@@ -5,6 +5,7 @@ import Expense from '../models/Expense.js';
 import authMiddleware, { adminMiddleware } from '../middleware/auth.js';
 
 const router = express.Router();
+router.use(authMiddleware, adminMiddleware); //only admins can access these routes
 
 // GET ALL USERS 
 router.get("/users", async (req, res) => {

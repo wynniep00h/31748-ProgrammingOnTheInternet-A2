@@ -40,7 +40,7 @@ export const getMonthlyTotals   = ()       => api.get("/expenses/summary/monthly
 
 //ADMIN API calls
 export const getAdminUsers = () => api.get("/admin/users");
-export const getAdminActivities = (params) => api.get("/admin/activity", { params });
+export const getAdminActivity = (params) => api.get("/admin/activity", { params });
 export const getAdminUser = (id) => api.get('/admin/users/${id}');
 export const deleteAdminUser = (id) => api.delete(`/admin/users/${id}`);
 export const updateUserRole = (id, role) => api.put(`/admin/users/${id}/role`, { role });

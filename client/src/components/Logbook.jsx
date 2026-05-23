@@ -48,6 +48,7 @@ export default function Logbook({onToast}) {
   const afterSave = () => { closeForm(); 
   load(); 
   onToast("Expense saved successfully!");  
+};
 
   {/*live search filter in real time as user types */}
   const filtered = expenses.filter((e) =>
@@ -55,8 +56,6 @@ export default function Logbook({onToast}) {
     e.description?.toLowerCase().includes(search.toLowerCase()) ||
     e.category.toLowerCase().includes(search.toLowerCase())
   );
-
-  };
 
   const total = expenses.reduce((s, e) => s + e.amount, 0);
 
@@ -201,4 +200,4 @@ export default function Logbook({onToast}) {
     )}
   </>
 );
-}
+  }
