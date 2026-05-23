@@ -19,6 +19,7 @@ A common and leading challenge often found in today's growing economy is managin
 - accessibility: contrast styling with abtract text colour and background, alt text for readablity
 
 5. Folder Structure
+![folder-structure](image-1.png)
 expense-tracker
 ├─ client
 │  ├─ eslint.config.js
