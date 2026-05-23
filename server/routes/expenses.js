@@ -1,13 +1,23 @@
 import express from "express";
 import Expense from "../models/Expense.js";
+import Activity from "../models/Activity.js";
+import authMiddleware from "../middleware/auth.js";
 
 const router = express.Router();
+
+router.use(authMiddleware);
+ //helper for log activity
+ const logActivity = async (userID, username, action, details = "") => {
+    try {
+        await Activity.create({ user: userID, username, action, details });
+    } catch { }
+    };
 
 // GET all expenses
 router.get("/", async (req, res) => {
   try {
     const { category, startDate, endDate } = req.query;
-    const filter = {};
+    const filter = { owner: req.user._id };
 
     if (category && category !== "All") filter.category = category;
     if (startDate || endDate) {
@@ -27,6 +37,7 @@ router.get("/", async (req, res) => {
 router.get("/summary/by-category", async (req, res) => {
   try {
     const result = await Expense.aggregate([
+      { $match: { owner: req.user._id } },
       {
         $group: {
           _id: "$category",
@@ -67,8 +78,18 @@ router.get("/summary/monthly", async (req, res) => {
 // POST create a new expense
 router.post("/", async (req, res) => {
   try {
-    const expense = new Expense(req.body);
+    const expense = new Expense({
+      ...req.body, owner: req.user._id
+    });
     await expense.save();
+
+    await logActivity(
+      req.user._id,
+      req.user.username,
+      "create_expense",
+      'Created expense: ${expense.title} $${expense.amount}'
+    );
+
     res.status(201).json(expense);
   } catch (err) {
     if (err.name === "ValidationError") {
@@ -82,11 +103,22 @@ router.post("/", async (req, res) => {
 router.put("/:id", async (req, res) => {
   try {
     const expense = await Expense.findByIdAndUpdate(
-      req.params.id,
+      { _id: req.params.id, owner: req.user._id },
       req.body,
       { new: true, runValidators: true }
     );
-    if (!expense) return res.status(404).json({ error: "Expense not found" });
+
+    if (!expense) {
+      return res.status(404).json({ error: "Expense not found" });
+  }
+  
+  await logActivity(
+    req.user._id,
+    req.user.username,
+    "update_expense",
+    'Updated expense: ${expense.title} $${expense.amount}'
+  );
+
     res.json(expense);
   } catch (err) {
     if (err.name === "ValidationError") {
@@ -99,8 +131,22 @@ router.put("/:id", async (req, res) => {
 // DELETE an expense
 router.delete("/:id", async (req, res) => {
   try {
-    const expense = await Expense.findByIdAndDelete(req.params.id);
-    if (!expense) return res.status(404).json({ error: "Expense not found" });
+    const expense = await Expense.findByIdAndDelete({
+      _id: req.params.id,
+      owner: req.user._id,
+    });
+
+    if (!expense) {
+      return res.status(404).json({ error: "Expense not found" });
+  }
+
+  await logActivity(
+    req.user._id,
+    req.user.username,
+    "delete_expense",
+    'Deleted expense: ${expense.title} $${expense.amount}'
+  );
+
     res.json({ message: "Expense deleted" });
   } catch (err) {
     res.status(500).json({ error: err.message });

@@ -2,6 +2,12 @@ import mongoose from "mongoose";
 
 const expenseSchema = new mongoose.Schema(
   {
+    owner: {
+      type: String,
+      ref: "User",
+      required: true,
+    },
+
     title: {
       type: String,
       required: [true, "Title is required"],
