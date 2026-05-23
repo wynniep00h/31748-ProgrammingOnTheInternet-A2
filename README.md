@@ -20,61 +20,6 @@ A common and leading challenge often found in today's growing economy is managin
 
 5. Folder Structure
 ![folder-structure](image-1.png)
-expense-tracker
-├─ client
-│  ├─ eslint.config.js
-│  ├─ image.png
-│  ├─ index.html
-│  ├─ package-lock.json
-│  ├─ package.json
-│  ├─ public
-│  │  ├─ favicon.svg
-│  │  └─ icons.svg
-│  ├─ src
-│  │  ├─ api.js
-│  │  ├─ App.jsx
-│  │  ├─ assets
-│  │  │  └─ icons
-│  │  │     ├─ education.png
-│  │  │     ├─ entertainment.png
-│  │  │     ├─ food.png
-│  │  │     ├─ gifts.png
-│  │  │     ├─ health.png
-│  │  │     ├─ housing.png
-│  │  │     ├─ other.png
-│  │  │     ├─ publictransport.png
-│  │  │     ├─ shopping.png
-│  │  │     └─ utilities.png
-│  │  ├─ components
-│  │  │  ├─ AdminPanel.jsx
-│  │  │  ├─ Analytics.jsx
-│  │  │  ├─ CategoryBadge.jsx
-│  │  │  ├─ ConfirmDialog.jsx
-│  │  │  ├─ ExpenseForm.jsx
-│  │  │  ├─ Logbook.jsx
-│  │  │  ├─ Login.jsx
-│  │  │  └─ Register.jsx
-│  │  ├─ constants.js
-│  │  ├─ index.css
-│  │  └─ main.jsx
-│  └─ vite.config.js
-├─ package-lock.json
-├─ package.json
-├─ README.md
-└─ server
-   ├─ index.js
-   ├─ middleware
-   │  └─ auth.js
-   ├─ models
-   │  ├─ Activity.js
-   │  ├─ Expense.js
-   │  └─ User.js
-   ├─ package-lock.json
-   ├─ package.json
-   └─ routes
-      ├─ admin.js
-      ├─ auth.js
-      └─ expenses.js
 
 
 
