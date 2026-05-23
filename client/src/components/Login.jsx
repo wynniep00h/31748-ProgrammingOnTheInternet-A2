@@ -40,7 +40,7 @@ export default function Login({ onLogin, onSwitchToRegister }) {
 
         <div className="auth-header">
           <h1 className="auth-logo">Spend<span>.</span>BuB</h1>
-          <p className="auth-subtitle">Sign in to track your expenses</p>
+          <p className="auth-subtitle">Sign in to track your expenses!</p>
         </div>
 
         {error && <div className="form-error">{error}</div>}

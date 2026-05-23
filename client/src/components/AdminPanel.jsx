@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { getAdminUsers, getAdminActivity, deleteAdminUser, updateUserRole } from "../api.js";
 import { formatDate } from "../constants.js";
+import ConfirmDialog from "./ConfirmDialog.jsx";
 
 const ACTION_LABELS = {
   register:       "Registered",
@@ -17,6 +18,7 @@ export default function AdminPanel() {
   const [activity, setActivity] = useState([]);
   const [loading, setLoading]   = useState(true);
   const [error, setError]       = useState("");
+  const [deleteTarget, setDeleteTarget] = useState(null);
 
   useEffect(() => {
     loadData();
@@ -40,13 +42,14 @@ export default function AdminPanel() {
     }
   };
 
-  const handleDeleteUser = async (user) => {
-    if (!window.confirm(`Delete user "${user.username}" and all their expenses?`)) return;
+  const handleDeleteUser = async () => {
     try {
-      await deleteAdminUser(user._id);
-      setUsers((prev) => prev.filter((u) => u._id !== user._id));
+      await deleteAdminUser(deleteTarget._id);
+      setUsers((prev) => prev.filter((u) => u._id !== deleteTarget._id));
+      setDeleteTarget(null);
     } catch (err) {
       alert(err.response?.data?.error || "Failed to delete user.");
+      setDeleteTarget(null);
     }
   };
 
@@ -143,7 +146,7 @@ export default function AdminPanel() {
                   <td>
                     <button
                       className="btn btn-danger btn-sm"
-                      onClick={() => handleDeleteUser(user)}
+                      onClick={() => setDeleteTarget(user)}
                     >
                       Delete
                     </button>
@@ -206,6 +209,18 @@ export default function AdminPanel() {
             </div>
           )}
         </div>
+      )}
+
+      {deleteTarget && (
+        <ConfirmDialog
+          message={
+            <>Are you sure you want to delete user{" "}
+            <strong>"{deleteTarget.username}"</strong> and all their expenses? This cannot be undone!
+            </>
+          }
+          onConfirm={handleDeleteUser}
+          onCancel={() => setDeleteTarget(null)}
+        />
       )}
     </>
   );

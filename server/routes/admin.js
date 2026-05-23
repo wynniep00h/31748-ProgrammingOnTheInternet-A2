@@ -17,7 +17,7 @@ router.get("/users", async (req, res) => {
         //add total expenses for each user
         const userWithStats = await Promise.all(
             users.map(async (user) => {
-                const expenseCount = await Expense.countDocuments({ user: user._id });
+                const expenseCount = await Expense.countDocuments({ owner: user._id });
                 const lastActivity = await Activity.findOne({ user: user._id }).sort({ createdAt: -1 });
                 return {
                     ...user.toObject(),

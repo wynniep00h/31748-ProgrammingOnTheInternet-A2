@@ -6,8 +6,6 @@ import Login from "./components/Login.jsx";
 import Register from "./components/Register.jsx";
 import { logoutUser } from "./api.js";
 
-{/* import { getExpenses } from "./api.js";
- import { formatCurrency } from "./constants.js"; */}
 
 const NAV = [
   { id: "logbook",   label: "Logbook"},
@@ -52,9 +50,9 @@ export default function App() {
 
   {/*navigation items for admin tabs */}
   const NAV = [
-    {id: "logbook",   label: "Logbook", icon: "📒"},
-    {id: "analytics", label: "Analytics", icon: "📊"},
-    ...(user?.role === "admin" ? [{ id: "admin", label: "Admin Panel", icon: "⚙️" }] : []), //add icons
+    {id: "logbook",   label: "Logbook"},
+    {id: "analytics", label: "Analytics"},
+    ...(user?.role === "admin" ? [{ id: "admin", label: "Admin Panel"}] : []),
   ];
 
   {/*if not logged in, show auth screens */}
@@ -72,36 +70,26 @@ export default function App() {
     );
   }
 
-  {/* useEffect(() => {
-  //   getExpenses()
-  //     .then(({ data }) => setTotal(data.reduce((s, e) => s + e.amount, 0)))
-  //     .catch(() => {});
-  // }, [view]); */}
-
- {/* MAIN APP LAYOUT once3 logged in*/}
+ {/* MAIN APP LAYOUT once logged in*/}
 
   return (
     <div className="app-shell">
       <header className="app-header">
         <h1>Spend<span>.</span>BuB</h1>
 
-        //user info and logout
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <span style={{ color: "var(--muted)", fontSize: "0.85rem" }}>
-            Welcome, <strong style={{ color: "var(--text)" }}>{user.username}</strong>
+          <span style={{ color: "var(--text2)", fontSize: "1.5rem" }}>
+            Welcome, <strong style={{ color: "var(--text2)" }}>{user.username}!</strong>
             {user.role === "admin" && (
               <span style={{
-                marginLeft: 8, fontSize: "0.7rem",
-                background: "var(--accent)", color: "#0f0f11",
+                marginLeft: 8, fontSize: "1.25rem",
+                background: "var(--accent)", color: "#ffffff",
                 padding: "2px 8px", borderRadius: 4, fontWeight: 700
               }}>
                 ADMIN
               </span>
             )}
           </span>
-          <button className="btn btn-ghost btn-sm" onClick={handleLogout}>
-            Logout
-          </button>
         </div>
       </header>
 
@@ -116,6 +104,10 @@ export default function App() {
             {n.label}
           </button>
         ))}
+
+        <button className="nav-btn btn-ghost" onClick={handleLogout}>
+        Logout
+      </button>
       </nav>
 
       <main className="main-content">
