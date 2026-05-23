@@ -13,7 +13,7 @@ export default function Login({ onLogin, onSwitchToRegister }) {
         e.preventDefault();
         setError("");
 
-        if (!form.usernam || !form.password) {
+        if (!form.username || !form.password) {
             return setError("Please enter your username and password.");
         }
 

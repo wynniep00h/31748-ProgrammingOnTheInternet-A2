@@ -35,7 +35,7 @@ router.get("/users", async (req, res) => {
 });
 
 // GET ALL ACTIVITTY LOGS
-router.get("/activities", async (req, res) => {
+router.get("/activity", async (req, res) => {
     try {
         const {userId, action, limit = 50} = req.query;
         const filter = {};
@@ -43,12 +43,12 @@ router.get("/activities", async (req, res) => {
         if (userId) filter.user = userId;
         if (action) filter.action = action;
 
-        const activities = await Activity.find(filter)
+        const activity = await Activity.find(filter)
         .sort({ createdAt: -1 })
         .limit(parseInt(limit))
         .populate("user", "username email");
         
-        res.json(activities);
+        res.json(activity);
     } catch (err) {
         res.status(500).json({error: err.message });
     }
