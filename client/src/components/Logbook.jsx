@@ -14,6 +14,8 @@ export default function Logbook({onToast}) {
   const [filterCat, setFilterCat]       = useState("All");
   const [filterStart, setFilterStart]   = useState("");
   const [filterEnd, setFilterEnd]       = useState("");
+  const [search, setSearch]           = useState(""); //search state
+
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -44,9 +46,17 @@ export default function Logbook({onToast}) {
   const openAdd   = () => { setEditTarget(null); setShowForm(true); };
   const closeForm = () => { setShowForm(false); setEditTarget(null); };
   const afterSave = () => { closeForm(); 
-                            load(); 
-                            onToast("Expense saved successfully!");  
-   };
+  load(); 
+  onToast("Expense saved successfully!");  
+
+  {/*live search filter in real time as user types */}
+  const filtered = expenses.filter((e) =>
+    e.title.toLowerCase().includes(search.toLowerCase()) ||
+    e.description?.toLowerCase().includes(search.toLowerCase()) ||
+    e.category.toLowerCase().includes(search.toLowerCase())
+  );
+
+  };
 
   const total = expenses.reduce((s, e) => s + e.amount, 0);
 
@@ -63,7 +73,21 @@ export default function Logbook({onToast}) {
       {/* LEFT COLUMN — filters + table */}
       <div className="logbook-main">
         <div className="filter-bar">
-          <select value={filterCat} onChange={(e) => setFilterCat(e.target.value)}>
+
+          {/*real time search bar */}
+          <input
+          id="search-expenses"
+          name="search-expenses"
+          type="text"
+          placeholder="Search expenses..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          style={{ minWidth: 200}}
+          />
+
+          {/* category and date filters */}
+          <select 
+          value={filterCat} onChange={(e) => setFilterCat(e.target.value)}>
             <option value="All">All Categories</option>
             {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
           </select>
@@ -99,7 +123,7 @@ export default function Logbook({onToast}) {
                 </tr>
               </thead>
               <tbody>
-                {expenses.map((exp) => (
+                {filtered.map((exp) => (
                   <tr key={exp._id}>
                     <td style={{ color: "var(--muted)", whiteSpace: "nowrap" }}>{formatDate(exp.date)}</td>
                     <td style={{ fontWeight: 500 }}>{exp.title}</td>
@@ -139,6 +163,12 @@ export default function Logbook({onToast}) {
             const catTotal = expenses
               .filter((e) => e.category === cat)
               .reduce((s, e) => s + e.amount, 0);
+              const filtered = expenses.filter((e) =>
+              e.title.toLowerCase().includes(search.toLowerCase()) ||
+              e.description?.toLowerCase().includes(search.toLowerCase()) ||
+              e.category.toLowerCase().includes(search.toLowerCase())
+            );
+
             if (catTotal === 0) return null;
             return (
               <div key={cat} className="cat-row" style={{ marginBottom: 12 }}>
